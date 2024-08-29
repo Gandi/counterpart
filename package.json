@@ -2,7 +2,21 @@
   "name": "counterpart",
   "version": "0.18.6",
   "description": "A translation and localization library for Node.js and the browser",
-  "main": "index.js",
+  "author": {
+    "name": "Martin Andert",
+    "email": "mandert@gmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Callum Jefferies",
+      "email": "callum@callumj.uk"
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/gandi/counterpart",
+  "bugs": {
+    "url": "https://github.com/gandi/counterpart/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gandi/counterpart.git"
@@ -18,25 +32,19 @@
     "translate",
     "localize"
   ],
+  "files": [
+    "locales",
+    "index.js",
+    "strftime.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "index.js",
   "scripts": {
     "test": "make test",
     "lint": "make lint"
   },
-  "author": {
-    "name": "Martin Andert",
-    "email": "mandert@gmail.com"
-  },
-  "contributors": [
-    {
-      "name": "Callum Jefferies",
-      "email": "callum@callumj.uk"
-    }
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/gandi/counterpart/issues"
-  },
-  "homepage": "https://github.com/gandi/counterpart",
+  "packageManager": "npm@10.8.3+sha512.d08425c8062f56d43bb8e84315864218af2492eb769e1f1ca40740f44e85bd148969382d651660363942e5909cb7ffcbef7ca0ae963ddc2c57a51243b4da8f56",
   "dependencies": {
     "date-names": "^0.1.11",
     "except": "^0.1.3",
@@ -48,6 +56,5 @@
     "jshint": "^2.5.10",
     "mocha": "^2.0.1",
     "time": "github:riyadshauk/node-time"
-  },
-  "packageManager": "npm@10.8.3+sha512.d08425c8062f56d43bb8e84315864218af2492eb769e1f1ca40740f44e85bd148969382d651660363942e5909cb7ffcbef7ca0ae963ddc2c57a51243b4da8f56"
+  }
 }
