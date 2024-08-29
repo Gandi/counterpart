@@ -3,7 +3,6 @@
 var extend  = require('extend');
 var sprintf = require("sprintf-js").sprintf;
 var events  = require('events');
-var except  = require('except');
 
 var strftime = require('./strftime');
 
@@ -394,11 +393,12 @@ Counterpart.prototype._resolve = function(locale, scope, object, subject, option
 };
 
 Counterpart.prototype._fallback = function(locale, scope, object, subject, options) {
-  options = except(options, 'fallback');
+  /* jshint unused: false */
+  var { fallback, ...restOptions } = options;
 
   if (Array.isArray(subject)) {
     for (var i = 0, ii = subject.length; i < ii; i++) {
-      var result = this._resolve(locale, scope, object, subject[i], options);
+      var result = this._resolve(locale, scope, object, subject[i], restOptions);
 
       if (result) {
         return result;
@@ -407,7 +407,7 @@ Counterpart.prototype._fallback = function(locale, scope, object, subject, optio
 
     return null;
   } else {
-    return this._resolve(locale, scope, object, subject, options);
+    return this._resolve(locale, scope, object, subject, restOptions);
   }
 };
 

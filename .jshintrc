@@ -1,4 +1,5 @@
 {
+  "esversion": 11,
   "undef": true,
   "unused": "vars",
   "asi": false,
