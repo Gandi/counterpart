@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/martinandert/counterpart.git"
+    "url": "https://github.com/gandi/counterpart.git"
   },
   "keywords": [
     "globalization",
@@ -34,9 +34,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/martinandert/counterpart/issues"
+    "url": "https://github.com/gandi/counterpart/issues"
   },
-  "homepage": "https://github.com/martinandert/counterpart",
+  "homepage": "https://github.com/gandi/counterpart",
   "dependencies": {
     "date-names": "^0.1.11",
     "except": "^0.1.3",
