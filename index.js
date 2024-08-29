@@ -1,8 +1,6 @@
 'use strict';
 
 var extend  = require('extend');
-var isArray = require('util').isArray;
-var isDate  = require('util').isDate;
 var sprintf = require("sprintf-js").sprintf;
 var events  = require('events');
 var except  = require('except');
@@ -10,6 +8,10 @@ var except  = require('except');
 var strftime = require('./strftime');
 
 var translationScope = 'counterpart';
+
+function isDate(val) {
+  return Object.prototype.toString.call(val) === '[object Date]';
+}
 
 function isString(val) {
   return typeof val === 'string' || Object.prototype.toString.call(val) === '[object String]';
@@ -186,7 +188,7 @@ Counterpart.prototype.removeErrorListener = function(callback) {
 };
 
 Counterpart.prototype.translate = function(key, options) {
-  if (!isArray(key) && !isString(key) || !key.length) {
+  if (!Array.isArray(key) && !isString(key) || !key.length) {
     throw new Error('invalid argument: key');
   }
 
@@ -317,7 +319,7 @@ Counterpart.prototype._normalizeKey = function(key, separator) {
   this._registry.normalizedKeys[separator] = this._registry.normalizedKeys[separator] || {};
 
   this._registry.normalizedKeys[separator][key] = this._registry.normalizedKeys[separator][key] || (function(key) {
-    if (isArray(key)) {
+    if (Array.isArray(key)) {
       var normalizedKeyArray = key.map(function(k) { return this._normalizeKey(k, separator); }.bind(this));
 
       return [].concat.apply([], normalizedKeyArray);
@@ -394,7 +396,7 @@ Counterpart.prototype._resolve = function(locale, scope, object, subject, option
 Counterpart.prototype._fallback = function(locale, scope, object, subject, options) {
   options = except(options, 'fallback');
 
-  if (isArray(subject)) {
+  if (Array.isArray(subject)) {
     for (var i = 0, ii = subject.length; i < ii; i++) {
       var result = this._resolve(locale, scope, object, subject[i], options);
 
