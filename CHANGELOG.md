@@ -7,5 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+ -  Remove usage of Node core lib util module ([#1](https://github.com/Gandi/counterpart/pull/1)).
 
-[unreleased]: https://github.com/gandi/counterpart/compare/v0.18.6...HEAD
+
+[unreleased]: https://github.com/gandi/counterpart/compare/0.18.6...HEAD
