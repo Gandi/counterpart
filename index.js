@@ -2,7 +2,6 @@
 
 var extend  = require('extend');
 var sprintf = require("sprintf-js").sprintf;
-var events  = require('events');
 
 var strftime = require('./strftime');
 
@@ -46,29 +45,72 @@ function getEntry(translations, keys) {
   }, translations);
 }
 
-function Counterpart() {
-  events.EventEmitter.apply(this);
+class Counterpart extends EventTarget {
+  constructor() {
+    super();
+    
+    this._registry = {
+      locale: 'en',
+      interpolate: true,
+      fallbackLocales: [],
+      scope: null,
+      translations: {},
+      interpolations: {},
+      normalizedKeys: {},
+      separator: '.',
+      keepTrailingDot: false,
+      keyTransformer: function(key) { return key; },
+      generateMissingEntry: function(key) { return 'missing translation: ' + key; }
+    };
+    
+    this.registerTranslations('en', require('./locales/en'));
+  }
+  
+  // EventTarget does not (yet) have a native way to retrieve attached listeners. 
+  // See https://github.com/whatwg/dom/issues/412
 
-  this._registry = {
-    locale: 'en',
-    interpolate: true,
-    fallbackLocales: [],
-    scope: null,
-    translations: {},
-    interpolations: {},
-    normalizedKeys: {},
-    separator: '.',
-    keepTrailingDot: false,
-    keyTransformer: function(key) { return key; },
-    generateMissingEntry: function(key) { return 'missing translation: ' + key; }
+  #events = {};
+
+  _addEventListener = (type, listener, options) => {
+    EventTarget.prototype.addEventListener.call(this, type, listener, options);
+
+    (this.#events[type] ||= []).push(listener);  
+
+    return this;
   };
 
-  this.registerTranslations('en', require('./locales/en'));
-  this.setMaxListeners(0);
-}
+  _removeEventListener = (type, listener, options) => {
+    EventTarget.prototype.removeEventListener.call(this, type, listener, options);
+  
+    let list = this.#events[type];
+    
+    if (!list) return this;
+    
+    let position = -1;
 
-Counterpart.prototype = events.EventEmitter.prototype;
-Counterpart.prototype.constructor = events.EventEmitter;
+    for (let i = list.length - 1; i >= 0; i--) {
+      if (list[i] === listener) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0) return this;
+
+    if (position === 0) {
+      list.shift();
+    }
+    else {
+      list.splice(list, position);
+    }
+
+    return this;
+  };
+
+  _listenerCount = (type) => {
+    return this.#events[type] ? this.#events[type].length : 0;
+  }
+}
 
 Counterpart.prototype.getLocale = function() {
   return this._registry.locale;
@@ -79,7 +121,7 @@ Counterpart.prototype.setLocale = function(value) {
 
   if (previous != value) {
     this._registry.locale = value;
-    this.emit('localechange', value, previous);
+    this.dispatchEvent(new CustomEvent('localechange', { detail: { locale: value, previous }}));
   }
 
   return previous;
@@ -158,32 +200,32 @@ Counterpart.prototype.registerInterpolations = function(data) {
 
 Counterpart.prototype.onLocaleChange =
 Counterpart.prototype.addLocaleChangeListener = function(callback) {
-  this.addListener('localechange', callback);
+  this._addEventListener('localechange', callback);
 };
 
 Counterpart.prototype.offLocaleChange =
 Counterpart.prototype.removeLocaleChangeListener = function(callback) {
-  this.removeListener('localechange', callback);
+  this._removeEventListener('localechange', callback);
 };
 
 Counterpart.prototype.onTranslationNotFound =
 Counterpart.prototype.addTranslationNotFoundListener = function(callback) {
-  this.addListener('translationnotfound', callback);
+  this._addEventListener('translationnotfound', callback);
 };
 
 Counterpart.prototype.offTranslationNotFound =
 Counterpart.prototype.removeTranslationNotFoundListener = function(callback) {
-  this.removeListener('translationnotfound', callback);
+  this._removeEventListener('translationnotfound', callback);
 };
 
 Counterpart.prototype.onError =
 Counterpart.prototype.addErrorListener = function(callback) {
-  this.addListener('error', callback);
+  this._addEventListener('error', callback);
 };
 
 Counterpart.prototype.offError =
 Counterpart.prototype.removeErrorListener = function(callback) {
-  this.removeListener('error', callback);
+  this._removeEventListener('error', callback);
 };
 
 Counterpart.prototype.translate = function(key, options) {
@@ -216,7 +258,7 @@ Counterpart.prototype.translate = function(key, options) {
   var entry = getEntry(this._registry.translations, keys);
 
   if (entry === null) {
-    this.emit('translationnotfound', locale, key, options.fallback, scope);
+    this.dispatchEvent(new CustomEvent('translationnotfound', { detail: { locale, key, fallback: options.fallback, scope }}));
 
     if (options.fallback) {
       entry = this._fallback(locale, scope, key, options.fallback, options);
@@ -354,8 +396,8 @@ Counterpart.prototype._interpolate = function(entry, values) {
   try {
     return sprintf(entry, extend({}, this._registry.interpolations, values));
   } catch (err) {
-    if (this.listenerCount('error') > 0) {
-      this.emit('error', err, entry, values);
+    if (this._listenerCount('error') > 0) {
+      this.dispatchEvent(new CustomEvent('error', { detail: { error: err, entry, values }}));
     } else {
       throw err;
     }

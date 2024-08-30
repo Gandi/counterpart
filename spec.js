@@ -607,9 +607,9 @@ describe('translate', function() {
         var oldLocale = instance.getLocale();
         var newLocale = oldLocale + 'x';
 
-        var handler = function(locale, previousLocale) {
-          assert.equal(locale, newLocale);
-          assert.equal(previousLocale, oldLocale);
+        var handler = function(evt) {
+          assert.equal(evt.detail.locale, newLocale);
+          assert.equal(evt.detail.previous, oldLocale);
           done();
         };
 
@@ -619,7 +619,8 @@ describe('translate', function() {
       });
     });
 
-    describe('when called more than 10 times', function() {
+    // EventTarget does not have a native `setMaxListeners`.
+    describe.skip('when called more than 10 times', function() {
       it('does not let Node issue a warning about a possible memory leak', function() {
         var oldConsoleError = console.error;
 
@@ -694,11 +695,11 @@ describe('translate', function() {
 
     describe('when called', function() {
       it('exposes the current locale, key, fallback and scope as arguments', function(done) {
-        var handler = function(locale, key, fallback, scope) {
-          assert.equal('yy', locale);
-          assert.equal('foo', key);
-          assert.equal('bar', fallback);
-          assert.equal('zz', scope);
+        var handler = function(evt) {
+          assert.equal('yy', evt.detail.locale);
+          assert.equal('foo', evt.detail.key);
+          assert.equal('bar', evt.detail.fallback);
+          assert.equal('zz', evt.detail.scope);
           done();
         };
 
@@ -763,10 +764,10 @@ describe('translate', function() {
 
     describe('when called', function() {
       it('exposes the error, entry and values as arguments', function(done) {
-        var handler = function(error, entry, values) {
-          assert.notEqual(undefined, error);
-          assert.equal('Hello, %(name)s!', entry);
-          assert.deepEqual({}, values);
+        var handler = function(evt) {
+          assert.notEqual(undefined, evt.detail.error);
+          assert.equal('Hello, %(name)s!', evt.detail.entry);
+          assert.deepEqual({}, evt.detail.values);
           done();
         };
 

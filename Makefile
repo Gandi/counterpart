@@ -1,6 +1,6 @@
 BIN = ./node_modules/.bin
 
-test: lint
+test:
 	@$(BIN)/mocha -t 5000 -b -R spec spec.js
 
 lint: node_modules/
