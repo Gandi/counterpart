@@ -1,5 +1,12 @@
 # Counterpart
 
+> [!NOTE]  
+> Please note this fork is primarily for our own internal needs, most notably
+modernizing the JS and reducing the browser footprint by removing Node.js core
+libs usage and useless shims.   
+We do not intend taking ownership and further mainteance of the project. 
+
+
 A translation and localization library for Node.js and the browser. The project is inspired by Ruby's famous [I18n gem](https://github.com/svenfuchs/i18n).
 
 Features:
@@ -7,15 +14,6 @@ Features:
 -  translation and localization
 -  interpolation of values to translations (sprintf-style with named arguments)
 -  pluralization (CLDR compatible)
-
-> [!NOTE]  
-> Please note this fork is primarily for our own internal needs, most notably
-modernizing the JS and reducing the browser footprint by removing Node.js core
-libs usage and useless shims.   
-We do not intend taking ownership and further mainteance of the project.   
-At the time of forking the project did not get any activity for more than 6 years
-and no signs of possible changes.
-
 
 ## Installation
 
