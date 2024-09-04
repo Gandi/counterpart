@@ -149,8 +149,12 @@ translate('baz', { fallback: 'default' })
 When a translation key cannot be resolved to a translation, regardless of whether a fallback is provided or not, `translate` will emit an event you can listen to:
 
 ```js
-translate.onTranslationNotFound(function(locale, key, fallback, scope) {
+translate.onTranslationNotFound(function(event) {
   // do important stuff here...
+  // event.detail.locale
+  // event.detail.key
+  // event.detail.fallback
+  // event.detail.scope
 });
 ```
 
@@ -182,8 +186,10 @@ Note that it is advised to call `setLocale` only once at the start of the applic
 In case of a locale change, the `setLocale` function emits an event you can listen to:
 
 ```js
-translate.onLocaleChange(function(newLocale, oldLocale) {
+translate.onLocaleChange(function(event) {
   // do important stuff here...
+  // event.detail.locale
+  // event.detail.previous
 }, [callbackContext]);
 ```
 
@@ -341,8 +347,11 @@ instance.translate('foo');
 When a translation fails, `translate` will emit an event you can listen to:
 
 ```js
-translate.onError(function(err, entry, values) {
+translate.onError(function(event) {
   // do some error handling here...
+  // event.detail.error
+  // event.detail.entry
+  // event.detail.values
 });
 ```
 
