@@ -10,22 +10,22 @@ module.exports = {
 
     formats: {
       date: {
-        'default':  '%a, %e de %b de %Y',
-        long:       '%A, %e de %B de %Y',
-        short:      '%d/%m/%y'
+        default: '%a, %e de %b de %Y',
+        long: '%A, %e de %B de %Y',
+        short: '%d/%m/%y',
       },
 
       time: {
-        'default':  '%H:%M',
-        long:       '%H:%M:%S %z',
-        short:      '%H:%M'
+        default: '%H:%M',
+        long: '%H:%M:%S %z',
+        short: '%H:%M',
       },
 
       datetime: {
-        'default':  '%a, %e de %b de %Y às %H:%M',
-        long:       '%A, %e de %B de %Y às %H:%M:%S %z',
-        short:      '%d/%m/%y às %H:%M'
-      }
-    }
-  }
+        default: '%a, %e de %b de %Y às %H:%M',
+        long: '%A, %e de %B de %Y às %H:%M:%S %z',
+        short: '%d/%m/%y às %H:%M',
+      },
+    },
+  },
 };

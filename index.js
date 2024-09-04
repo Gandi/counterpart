@@ -1,7 +1,7 @@
 'use strict';
 
-var extend  = require('extend');
-var sprintf = require("sprintf-js").sprintf;
+var extend = require('extend');
+var sprintf = require('sprintf-js').sprintf;
 
 var strftime = require('./strftime');
 
@@ -12,11 +12,17 @@ function isDate(val) {
 }
 
 function isString(val) {
-  return typeof val === 'string' || Object.prototype.toString.call(val) === '[object String]';
+  return (
+    typeof val === 'string' ||
+    Object.prototype.toString.call(val) === '[object String]'
+  );
 }
 
 function isFunction(val) {
-  return typeof val === 'function' || Object.prototype.toString.call(val) === '[object Function]';
+  return (
+    typeof val === 'function' ||
+    Object.prototype.toString.call(val) === '[object Function]'
+  );
 }
 
 function isPlainObject(val) {
@@ -36,7 +42,7 @@ function hasOwnProp(obj, key) {
 }
 
 function getEntry(translations, keys) {
-  return keys.reduce(function(result, key) {
+  return keys.reduce(function (result, key) {
     if (isPlainObject(result) && hasOwnProp(result, key)) {
       return result[key];
     } else {
@@ -48,7 +54,7 @@ function getEntry(translations, keys) {
 class Counterpart extends EventTarget {
   constructor() {
     super();
-    
+
     this._registry = {
       locale: 'en',
       interpolate: true,
@@ -59,14 +65,18 @@ class Counterpart extends EventTarget {
       normalizedKeys: {},
       separator: '.',
       keepTrailingDot: false,
-      keyTransformer: function(key) { return key; },
-      generateMissingEntry: function(key) { return 'missing translation: ' + key; }
+      keyTransformer: function (key) {
+        return key;
+      },
+      generateMissingEntry: function (key) {
+        return 'missing translation: ' + key;
+      },
     };
-    
+
     this.registerTranslations('en', require('./locales/en'));
   }
-  
-  // EventTarget does not (yet) have a native way to retrieve attached listeners. 
+
+  // EventTarget does not (yet) have a native way to retrieve attached listeners.
   // See https://github.com/whatwg/dom/issues/412
 
   #events = {};
@@ -74,18 +84,23 @@ class Counterpart extends EventTarget {
   _addEventListener = (type, listener, options) => {
     EventTarget.prototype.addEventListener.call(this, type, listener, options);
 
-    (this.#events[type] ||= []).push(listener);  
+    (this.#events[type] ||= []).push(listener);
 
     return this;
   };
 
   _removeEventListener = (type, listener, options) => {
-    EventTarget.prototype.removeEventListener.call(this, type, listener, options);
-  
+    EventTarget.prototype.removeEventListener.call(
+      this,
+      type,
+      listener,
+      options,
+    );
+
     let list = this.#events[type];
-    
+
     if (!list) return this;
-    
+
     let position = -1;
 
     for (let i = list.length - 1; i >= 0; i--) {
@@ -99,137 +114,142 @@ class Counterpart extends EventTarget {
 
     if (position === 0) {
       list.shift();
-    }
-    else {
+    } else {
       list.splice(list, position);
     }
 
     return this;
   };
 
-  _listenerCount = (type) => {
+  _listenerCount = type => {
     return this.#events[type] ? this.#events[type].length : 0;
-  }
+  };
 }
 
-Counterpart.prototype.getLocale = function() {
+Counterpart.prototype.getLocale = function () {
   return this._registry.locale;
 };
 
-Counterpart.prototype.setLocale = function(value) {
+Counterpart.prototype.setLocale = function (value) {
   var previous = this._registry.locale;
 
   if (previous != value) {
     this._registry.locale = value;
-    this.dispatchEvent(new CustomEvent('localechange', { detail: { locale: value, previous }}));
+    this.dispatchEvent(
+      new CustomEvent('localechange', { detail: { locale: value, previous } }),
+    );
   }
 
   return previous;
 };
 
-Counterpart.prototype.getFallbackLocale = function() {
+Counterpart.prototype.getFallbackLocale = function () {
   return this._registry.fallbackLocales;
 };
 
-Counterpart.prototype.setFallbackLocale = function(value) {
+Counterpart.prototype.setFallbackLocale = function (value) {
   var previous = this._registry.fallbackLocales;
   this._registry.fallbackLocales = [].concat(value || []);
   return previous;
 };
 
-Counterpart.prototype.getAvailableLocales = function() {
-  return this._registry.availableLocales || Object.keys(this._registry.translations);
+Counterpart.prototype.getAvailableLocales = function () {
+  return (
+    this._registry.availableLocales || Object.keys(this._registry.translations)
+  );
 };
 
-Counterpart.prototype.setAvailableLocales = function(value) {
+Counterpart.prototype.setAvailableLocales = function (value) {
   var previous = this.getAvailableLocales();
   this._registry.availableLocales = value;
   return previous;
 };
 
-Counterpart.prototype.getSeparator = function() {
+Counterpart.prototype.getSeparator = function () {
   return this._registry.separator;
 };
 
-Counterpart.prototype.setSeparator = function(value) {
+Counterpart.prototype.setSeparator = function (value) {
   var previous = this._registry.separator;
   this._registry.separator = value;
   return previous;
 };
 
-Counterpart.prototype.setInterpolate = function(value) {
+Counterpart.prototype.setInterpolate = function (value) {
   var previous = this._registry.interpolate;
   this._registry.interpolate = value;
   return previous;
 };
 
-Counterpart.prototype.getInterpolate = function() {
+Counterpart.prototype.getInterpolate = function () {
   return this._registry.interpolate;
 };
 
-Counterpart.prototype.setKeyTransformer = function(value) {
+Counterpart.prototype.setKeyTransformer = function (value) {
   var previous = this._registry.keyTransformer;
   this._registry.keyTransformer = value;
   return previous;
 };
 
-Counterpart.prototype.getKeyTransformer = function() {
+Counterpart.prototype.getKeyTransformer = function () {
   return this._registry.keyTransformer;
 };
 
-Counterpart.prototype.setMissingEntryGenerator = function(value) {
+Counterpart.prototype.setMissingEntryGenerator = function (value) {
   var previous = this._registry.generateMissingEntry;
   this._registry.generateMissingEntry = value;
   return previous;
 };
 
-Counterpart.prototype.getMissingEntryGenerator = function() {
+Counterpart.prototype.getMissingEntryGenerator = function () {
   return this._registry.generateMissingEntry;
 };
 
-Counterpart.prototype.registerTranslations = function(locale, data) {
+Counterpart.prototype.registerTranslations = function (locale, data) {
   var translations = {};
   translations[locale] = data;
   extend(true, this._registry.translations, translations);
   return translations;
 };
 
-Counterpart.prototype.registerInterpolations = function(data) {
+Counterpart.prototype.registerInterpolations = function (data) {
   return extend(true, this._registry.interpolations, data);
 };
 
 Counterpart.prototype.onLocaleChange =
-Counterpart.prototype.addLocaleChangeListener = function(callback) {
-  this._addEventListener('localechange', callback);
-};
+  Counterpart.prototype.addLocaleChangeListener = function (callback) {
+    this._addEventListener('localechange', callback);
+  };
 
 Counterpart.prototype.offLocaleChange =
-Counterpart.prototype.removeLocaleChangeListener = function(callback) {
-  this._removeEventListener('localechange', callback);
-};
+  Counterpart.prototype.removeLocaleChangeListener = function (callback) {
+    this._removeEventListener('localechange', callback);
+  };
 
 Counterpart.prototype.onTranslationNotFound =
-Counterpart.prototype.addTranslationNotFoundListener = function(callback) {
-  this._addEventListener('translationnotfound', callback);
-};
+  Counterpart.prototype.addTranslationNotFoundListener = function (callback) {
+    this._addEventListener('translationnotfound', callback);
+  };
 
 Counterpart.prototype.offTranslationNotFound =
-Counterpart.prototype.removeTranslationNotFoundListener = function(callback) {
-  this._removeEventListener('translationnotfound', callback);
-};
+  Counterpart.prototype.removeTranslationNotFoundListener = function (
+    callback,
+  ) {
+    this._removeEventListener('translationnotfound', callback);
+  };
 
-Counterpart.prototype.onError =
-Counterpart.prototype.addErrorListener = function(callback) {
-  this._addEventListener('error', callback);
-};
+Counterpart.prototype.onError = Counterpart.prototype.addErrorListener =
+  function (callback) {
+    this._addEventListener('error', callback);
+  };
 
-Counterpart.prototype.offError =
-Counterpart.prototype.removeErrorListener = function(callback) {
-  this._removeEventListener('error', callback);
-};
+Counterpart.prototype.offError = Counterpart.prototype.removeErrorListener =
+  function (callback) {
+    this._removeEventListener('error', callback);
+  };
 
-Counterpart.prototype.translate = function(key, options) {
-  if (!Array.isArray(key) && !isString(key) || !key.length) {
+Counterpart.prototype.translate = function (key, options) {
+  if ((!Array.isArray(key) && !isString(key)) || !key.length) {
     throw new Error('invalid argument: key');
   }
 
@@ -250,7 +270,9 @@ Counterpart.prototype.translate = function(key, options) {
   var separator = options.separator || this._registry.separator;
   delete options.separator;
 
-  var fallbackLocales = [].concat(options.fallbackLocale || this._registry.fallbackLocales);
+  var fallbackLocales = [].concat(
+    options.fallbackLocale || this._registry.fallbackLocales,
+  );
   delete options.fallbackLocale;
 
   var keys = this._normalizeKeys(locale, scope, key, separator);
@@ -258,17 +280,30 @@ Counterpart.prototype.translate = function(key, options) {
   var entry = getEntry(this._registry.translations, keys);
 
   if (entry === null) {
-    this.dispatchEvent(new CustomEvent('translationnotfound', { detail: { locale, key, fallback: options.fallback, scope }}));
+    this.dispatchEvent(
+      new CustomEvent('translationnotfound', {
+        detail: { locale, key, fallback: options.fallback, scope },
+      }),
+    );
 
     if (options.fallback) {
       entry = this._fallback(locale, scope, key, options.fallback, options);
     }
   }
 
-  if (entry === null && fallbackLocales.length > 0 && fallbackLocales.indexOf(locale) === -1) {
+  if (
+    entry === null &&
+    fallbackLocales.length > 0 &&
+    fallbackLocales.indexOf(locale) === -1
+  ) {
     for (var i = 0, ii = fallbackLocales.length; i < ii; i++) {
       var fallbackLocale = fallbackLocales[i];
-      var fallbackKeys = this._normalizeKeys(fallbackLocale, scope, key, separator);
+      var fallbackKeys = this._normalizeKeys(
+        fallbackLocale,
+        scope,
+        key,
+        separator,
+      );
       entry = getEntry(this._registry.translations, fallbackKeys);
 
       if (entry) {
@@ -291,30 +326,37 @@ Counterpart.prototype.translate = function(key, options) {
   return entry;
 };
 
-Counterpart.prototype.localize = function(object, options) {
+Counterpart.prototype.localize = function (object, options) {
   if (!isDate(object)) {
     throw new Error('invalid argument: object must be a date');
   }
 
   options = extend(true, {}, options);
 
-  var locale  = options.locale  || this._registry.locale;
-  var scope   = options.scope   || translationScope;
-  var type    = options.type    || 'datetime';
-  var format  = options.format  || 'default';
+  var locale = options.locale || this._registry.locale;
+  var scope = options.scope || translationScope;
+  var type = options.type || 'datetime';
+  var format = options.format || 'default';
 
   options = { locale: locale, scope: scope, interpolate: false };
-  format  = this.translate(['formats', type, format], extend(true, {}, options));
+  format = this.translate(['formats', type, format], extend(true, {}, options));
 
   return strftime(object, format, this.translate('names', options));
 };
 
-Counterpart.prototype._pluralize = function(locale, entry, count) {
-  if (typeof entry !== 'object' || entry === null || typeof count !== 'number') {
+Counterpart.prototype._pluralize = function (locale, entry, count) {
+  if (
+    typeof entry !== 'object' ||
+    entry === null ||
+    typeof count !== 'number'
+  ) {
     return entry;
   }
 
-  var pluralizeFunc = this.translate('pluralize', { locale: locale, scope: translationScope });
+  var pluralizeFunc = this.translate('pluralize', {
+    locale: locale,
+    scope: translationScope,
+  });
 
   if (Object.prototype.toString.call(pluralizeFunc) !== '[object Function]') {
     return pluralizeFunc;
@@ -323,7 +365,7 @@ Counterpart.prototype._pluralize = function(locale, entry, count) {
   return pluralizeFunc(entry, count);
 };
 
-Counterpart.prototype.withLocale = function(locale, callback, context) {
+Counterpart.prototype.withLocale = function (locale, callback, context) {
   var previous = this._registry.locale;
   this._registry.locale = locale;
   var result = callback.call(context);
@@ -331,7 +373,7 @@ Counterpart.prototype.withLocale = function(locale, callback, context) {
   return result;
 };
 
-Counterpart.prototype.withScope = function(scope, callback, context) {
+Counterpart.prototype.withScope = function (scope, callback, context) {
   var previous = this._registry.scope;
   this._registry.scope = scope;
   var result = callback.call(context);
@@ -339,14 +381,19 @@ Counterpart.prototype.withScope = function(scope, callback, context) {
   return result;
 };
 
-Counterpart.prototype.withSeparator = function(separator, callback, context) {
+Counterpart.prototype.withSeparator = function (separator, callback, context) {
   var previous = this.setSeparator(separator);
   var result = callback.call(context);
   this.setSeparator(previous);
   return result;
 };
 
-Counterpart.prototype._normalizeKeys = function(locale, scope, key, separator) {
+Counterpart.prototype._normalizeKeys = function (
+  locale,
+  scope,
+  key,
+  separator,
+) {
   var keys = [];
 
   keys = keys.concat(this._normalizeKey(locale, separator));
@@ -356,39 +403,46 @@ Counterpart.prototype._normalizeKeys = function(locale, scope, key, separator) {
   return keys;
 };
 
-Counterpart.prototype._normalizeKey = function(key, separator) {
-  this._registry.normalizedKeys[separator] = this._registry.normalizedKeys[separator] || {};
+Counterpart.prototype._normalizeKey = function (key, separator) {
+  this._registry.normalizedKeys[separator] =
+    this._registry.normalizedKeys[separator] || {};
 
-  this._registry.normalizedKeys[separator][key] = this._registry.normalizedKeys[separator][key] || (function(key) {
-    if (Array.isArray(key)) {
-      var normalizedKeyArray = key.map(function(k) { return this._normalizeKey(k, separator); }.bind(this));
+  this._registry.normalizedKeys[separator][key] =
+    this._registry.normalizedKeys[separator][key] ||
+    function (key) {
+      if (Array.isArray(key)) {
+        var normalizedKeyArray = key.map(
+          function (k) {
+            return this._normalizeKey(k, separator);
+          }.bind(this),
+        );
 
-      return [].concat.apply([], normalizedKeyArray);
-    } else {
-      if (typeof key === 'undefined' || key === null) {
-        return [];
-      }
+        return [].concat.apply([], normalizedKeyArray);
+      } else {
+        if (typeof key === 'undefined' || key === null) {
+          return [];
+        }
 
-      var keys = key.split(separator);
+        var keys = key.split(separator);
 
-      for (var i = keys.length - 1; i >= 0; i--) {
-        if (keys[i] === '') {
-          keys.splice(i, 1);
+        for (var i = keys.length - 1; i >= 0; i--) {
+          if (keys[i] === '') {
+            keys.splice(i, 1);
 
-          if (this._registry.keepTrailingDot === true && i == keys.length) {
-            keys[keys.length - 1] += '' + separator;
+            if (this._registry.keepTrailingDot === true && i == keys.length) {
+              keys[keys.length - 1] += '' + separator;
+            }
           }
         }
-      }
 
-      return keys;
-    }
-  }.bind(this))(key);
+        return keys;
+      }
+    }.bind(this)(key);
 
   return this._registry.normalizedKeys[separator][key];
 };
 
-Counterpart.prototype._interpolate = function(entry, values) {
+Counterpart.prototype._interpolate = function (entry, values) {
   if (typeof entry !== 'string') {
     return entry;
   }
@@ -397,7 +451,9 @@ Counterpart.prototype._interpolate = function(entry, values) {
     return sprintf(entry, extend({}, this._registry.interpolations, values));
   } catch (err) {
     if (this._listenerCount('error') > 0) {
-      this.dispatchEvent(new CustomEvent('error', { detail: { error: err, entry, values }}));
+      this.dispatchEvent(
+        new CustomEvent('error', { detail: { error: err, entry, values } }),
+      );
     } else {
       throw err;
     }
@@ -405,7 +461,13 @@ Counterpart.prototype._interpolate = function(entry, values) {
   }
 };
 
-Counterpart.prototype._resolve = function(locale, scope, object, subject, options) {
+Counterpart.prototype._resolve = function (
+  locale,
+  scope,
+  object,
+  subject,
+  options,
+) {
   options = options || {};
 
   if (options.resolve === false) {
@@ -415,7 +477,10 @@ Counterpart.prototype._resolve = function(locale, scope, object, subject, option
   var result;
 
   if (isSymbol(subject)) {
-    result = this.translate(subject, extend({}, options, { locale: locale, scope: scope }));
+    result = this.translate(
+      subject,
+      extend({}, options, { locale: locale, scope: scope }),
+    );
   } else if (isFunction(subject)) {
     var dateOrTime;
 
@@ -434,13 +499,25 @@ Counterpart.prototype._resolve = function(locale, scope, object, subject, option
   return /^missing translation:/.test(result) ? null : result;
 };
 
-Counterpart.prototype._fallback = function(locale, scope, object, subject, options) {
+Counterpart.prototype._fallback = function (
+  locale,
+  scope,
+  object,
+  subject,
+  options,
+) {
   /* jshint unused: false */
   var { fallback, ...restOptions } = options;
 
   if (Array.isArray(subject)) {
     for (var i = 0, ii = subject.length; i < ii; i++) {
-      var result = this._resolve(locale, scope, object, subject[i], restOptions);
+      var result = this._resolve(
+        locale,
+        scope,
+        object,
+        subject[i],
+        restOptions,
+      );
 
       if (result) {
         return result;
@@ -461,7 +538,7 @@ function translate() {
 
 extend(translate, instance, {
   Instance: Counterpart,
-  Translator: Counterpart
+  Translator: Counterpart,
 });
 
 module.exports = translate;
