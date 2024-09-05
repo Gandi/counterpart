@@ -506,7 +506,6 @@ Counterpart.prototype._fallback = function (
   subject,
   options,
 ) {
-  /* jshint unused: false */
   var { fallback, ...restOptions } = options;
 
   if (Array.isArray(subject)) {

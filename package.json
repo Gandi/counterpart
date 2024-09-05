@@ -46,8 +46,7 @@
   "scripts": {
     "format:check": "prettier --check --cache --cache-location=.cache/prettier \"**/*.js\"",
     "format:write": "prettier --write --cache --cache-location=.cache/prettier \"**/*.js\"",
-    "test": "make test",
-    "lint": "make lint"
+    "test": "make test"
   },
   "packageManager": "npm@10.8.3+sha512.d08425c8062f56d43bb8e84315864218af2492eb769e1f1ca40740f44e85bd148969382d651660363942e5909cb7ffcbef7ca0ae963ddc2c57a51243b4da8f56",
   "dependencies": {
@@ -57,7 +56,6 @@
     "sprintf-js": "^1.0.3"
   },
   "devDependencies": {
-    "jshint": "^2.13.6",
     "mocha": "^2.0.1",
     "prettier": "^3.3.3",
     "time": "github:riyadshauk/node-time"

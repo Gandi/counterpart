@@ -3,9 +3,6 @@ BIN = ./node_modules/.bin
 test:
 	@$(BIN)/mocha -t 5000 -b -R spec spec.js
 
-lint: node_modules/
-	@$(BIN)/jshint index.js strftime.js locales/
-
 install:
 	@npm install
 
