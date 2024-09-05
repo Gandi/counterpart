@@ -361,8 +361,8 @@ Use `translate.offError(myHandler)` to stop listening for errors.
 
 Here's a quick guide:
 
-1. Fork the repo and `make install`.
-1. Run the tests. We only take pull requests with passing tests, and it's great to know that you have a clean slate: `make test`.
+1. Fork the repo and `npm install`.
+1. Run the tests. We only take pull requests with passing tests, and it's great to know that you have a clean slate: `npm test`.
 1. Add a test for your change. Only refactoring and documentation changes require no new tests. If you are adding functionality or are fixing a bug, we need a test!
 1. Make the test pass.
 1. Push to your fork and submit a pull request.
