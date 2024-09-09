@@ -38,6 +38,7 @@
   "files": [
     "locales",
     "index.js",
+    "index.js.flow",
     "strftime.js",
     "README.md",
     "LICENSE"
