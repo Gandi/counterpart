@@ -20,7 +20,7 @@ Features:
 Install via npm:
 
 ```bash
-% npm install counterpart
+% npm install @gandi/counterpart
 ```
 
 
