@@ -50,6 +50,9 @@
     "test": "mocha -t 5000 -b -R spec spec.js",
     "prepublishOnly": "npm test"
   },
+  "engines": {
+    "node": ">=22.1.0"
+  },
   "packageManager": "npm@10.8.3+sha512.d08425c8062f56d43bb8e84315864218af2492eb769e1f1ca40740f44e85bd148969382d651660363942e5909cb7ffcbef7ca0ae963ddc2c57a51243b4da8f56",
   "dependencies": {
     "date-names": "^0.1.11",
