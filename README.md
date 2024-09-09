@@ -26,10 +26,12 @@ Install via npm:
 
 ## Usage
 
-Require the counterpart module to get a reference to the `translate` function:
+Require or import the counterpart module to get a reference to the `translate` function:
 
 ```js
-var translate = require('counterpart');
+var translate = require('@gandi/counterpart');
+// or
+import Counterpart from '@gandi/counterpart';
 ```
 
 This function expects a `key` and `options` as arguments and translates, pluralizes and interpolates a given key using a given locale, scope, and fallback, as well as interpolation values.
@@ -237,7 +239,7 @@ translate.setFallbackLocale([ 'bar', 'en' ]) // Can also take multiple fallback 
 You can use the `registerTranslations` function to deep-merge data for a specific locale into the global translation object:
 
 ```js
-translate.registerTranslations('de', require('counterpart/locales/de'));
+translate.registerTranslations('de', require('@gandi/counterpart/locales/de'));
 translate.registerTranslations('de', require('./locales/de.json'));
 ```
 
@@ -267,7 +269,7 @@ Instead, you as a library author should advise end-users to on-demand-load trans
 
 ```js
 // Execute this code to load the 'de' translations:
-require('counterpart').registerTranslations('de', require('my_package/locales/de'));
+require('@gandi/counterpart').registerTranslations('de', require('my_package/locales/de'));
 ```
 
 ### Registering Default Interpolations
@@ -323,7 +325,7 @@ translate.localize(date, { type: 'time' })                  // => '13:46'
 translate.localize(date, { type: 'time', format: 'short' }) // => '13:46'
 translate.localize(date, { type: 'time', format: 'long' })  // => '13:46:24 +01:00'
 
-translate.registerTranslations('de', require('counterpart/locales/de'));
+translate.registerTranslations('de', require('@gandi/counterpart/locales/de'));
 translate.localize(date, { locale: 'de' })  // => 'Fr, 21. Feb 2014, 13:46 Uhr'
 ```
 
@@ -334,7 +336,7 @@ Sure, you can integrate custom localizations by adding to or overwriting the "co
 You can invoke an instance of Counterpart should you need various locales displayed at once in your application:
 
 ```js
-var Counterpart = require('counterpart').Instance;
+var Counterpart = require('@gandi/counterpart').Instance;
 
 var instance = new Counterpart();
 
