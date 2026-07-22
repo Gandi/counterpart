@@ -136,6 +136,23 @@ Note that this library currently only supports an algorithm for English-like plu
 
 As seen above, the `count` option can be used both for pluralization and interpolation.
 
+### Interpolation overriding
+
+Sometimes it can be useful to tranform a translation before or after interpolation variables being applied.
+To do so, configure your translator:
+
+```js
+const prev = translate.setInterpolateFn(function(entry, options) => {
+  let interpolated = entry;
+  interpolated = applyModificationBefore(interpolated, options);
+  interpolated = translate._doInterpolate(interpolated, options);
+  interpolated = applyModificationAfter(interpolated, options);
+})
+
+// you can restore previous function later
+translate.setInterpolateFn(prev)
+```
+
 ### Fallbacks
 
 If for a key no translation could be found, `translate` returns an error string of the form "translation missing: %(key)s".
