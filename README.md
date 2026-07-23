@@ -138,11 +138,11 @@ As seen above, the `count` option can be used both for pluralization and interpo
 
 ### Interpolation overriding
 
-Sometimes it can be useful to tranform a translation before or after interpolation variables being applied.
+Sometimes it can be useful to transform a translation before or after interpolation variables get applied.
 To do so, configure your translator:
 
 ```js
-const prev = translate.setInterpolateFn(function(entry, options) => {
+const prev = translate.setInterpolateFn((entry, options) => {
   let interpolated = entry;
   interpolated = applyModificationBefore(interpolated, options);
   interpolated = translate._doInterpolate(interpolated, options);
