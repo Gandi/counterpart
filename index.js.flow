@@ -40,6 +40,7 @@ export type ErrorHandler = (evt: {
 }) => void;
 
 declare function translate(key: string | string[], options?: Options): string;
+declare function interpolateFn(string, Options): string;
 
 declare class Counterpart {
   constructor(): this;
@@ -47,6 +48,7 @@ declare class Counterpart {
   translate: typeof translate;
   localize(date: Date, options: { ... }): string;
   setSeparator(value: string): string;
+  setInterpolateFn(fn: typeof interpolateFn): interpolateFn;
   setMissingEntryGenerator(callback: (value: string) => void): void;
   getLocale(): string;
   setLocale(value: string): string;

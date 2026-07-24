@@ -58,6 +58,9 @@ class Counterpart extends EventTarget {
     this._registry = {
       locale: 'en',
       interpolate: true,
+      interpolateFn: (entry, options) => {
+        return this.doInterpolate(entry, options);
+      },
       fallbackLocales: [],
       scope: null,
       translations: {},
@@ -183,6 +186,13 @@ Counterpart.prototype.setInterpolate = function (value) {
 
 Counterpart.prototype.getInterpolate = function () {
   return this._registry.interpolate;
+};
+
+Counterpart.prototype.setInterpolateFn = function (fn) {
+  var previous = this._registry.interpolateFn;
+  this._registry.interpolateFn = fn;
+
+  return previous;
 };
 
 Counterpart.prototype.setKeyTransformer = function (value) {
@@ -320,7 +330,7 @@ Counterpart.prototype.translate = function (key, options) {
   entry = this._pluralize(locale, entry, options.count);
 
   if (this._registry.interpolate !== false && options.interpolate !== false) {
-    entry = this._interpolate(entry, options);
+    entry = this._registry.interpolateFn(entry, options);
   }
 
   return entry;
@@ -442,7 +452,7 @@ Counterpart.prototype._normalizeKey = function (key, separator) {
   return this._registry.normalizedKeys[separator][key];
 };
 
-Counterpart.prototype._interpolate = function (entry, values) {
+Counterpart.prototype.doInterpolate = function (entry, values) {
   if (typeof entry !== 'string') {
     return entry;
   }

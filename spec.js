@@ -410,6 +410,70 @@ describe('translate', function () {
             });
           });
         });
+
+        describe('with a custom #setInterpolateFn', function () {
+          it('returns the translation with a before & after modification', function () {
+            const prevFn = instance.setInterpolateFn((entry, options) => {
+              let interpolated = entry;
+
+              interpolated = interpolated.replaceAll('##', '**');
+              interpolated = instance.doInterpolate(interpolated, options);
+              interpolated = interpolated.replaceAll('__', '--');
+
+              return interpolated;
+            });
+
+            instance.registerTranslations('en', {
+              before:
+                'manipulate entry before ##, but not in params %(content)s',
+              after:
+                'manipulate entry after __, and also in params %(content)s',
+            });
+
+            const content = '## & __';
+
+            assert.equal(
+              instance.translate('before', {
+                content,
+              }),
+              'manipulate entry before **, but not in params ## & --',
+            );
+            assert.equal(
+              instance.translate('after', {
+                content,
+              }),
+              'manipulate entry after --, and also in params ## & --',
+            );
+
+            instance.setInterpolateFn(prevFn);
+          });
+
+          it('is able to use custom options', function () {
+            const prevFn = instance.setInterpolateFn((entry, options) => {
+              const params = options;
+              if (options.onlyParams) {
+                params.content = params.content.replaceAll('##', '++');
+              }
+              return instance.doInterpolate(entry, params);
+            });
+
+            instance.registerTranslations('en', {
+              key: '## manipulate content using a custom option: %(content)s',
+            });
+
+            const content = 'this is the content ##';
+
+            assert.equal(
+              instance.translate('key', {
+                content,
+                onlyParams: true,
+              }),
+              '## manipulate content using a custom option: this is the content ++',
+            );
+
+            instance.setInterpolateFn(prevFn);
+          });
+        });
       });
 
       describe('with a translation for a prefix of the key present', function () {
@@ -1342,6 +1406,32 @@ describe('translate', function () {
       var previous = instance.setInterpolate(true);
       assert.equal(previous, current);
       instance.setInterpolate(current);
+    });
+  });
+
+  describe('#setInterpolateFn', function () {
+    it('is a function', function () {
+      assert.isFunction(instance.setInterpolateFn);
+    });
+
+    it('sets the interpolate function in the registry', function () {
+      var prev = instance._registry.interpolate;
+
+      const custom = () => {};
+      instance.setInterpolateFn(custom);
+      assert.equal(instance._registry.interpolateFn, custom);
+
+      instance._registry.interpolate = prev;
+    });
+
+    it('returns the previous interpolate function that was stored in the registry', function () {
+      var custom = entry => {
+        return this.doInterpolate(entry);
+      };
+      var prev = instance._registry.interpolateFn;
+      var previous = instance.setInterpolateFn(custom);
+      assert.equal(prev, previous);
+      assert.equal(instance.setInterpolateFn(previous), custom);
     });
   });
 
