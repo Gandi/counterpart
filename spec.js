@@ -417,7 +417,7 @@ describe('translate', function () {
               let interpolated = entry;
 
               interpolated = interpolated.replaceAll('##', '**');
-              interpolated = instance._doInterpolate(interpolated, options);
+              interpolated = instance.doInterpolate(interpolated, options);
               interpolated = interpolated.replaceAll('__', '--');
 
               return interpolated;
@@ -454,7 +454,7 @@ describe('translate', function () {
               if (options.onlyParams) {
                 params.content = params.content.replaceAll('##', '++');
               }
-              return instance._doInterpolate(entry, params);
+              return instance.doInterpolate(entry, params);
             });
 
             instance.registerTranslations('en', {
@@ -1426,7 +1426,7 @@ describe('translate', function () {
 
     it('returns the previous interpolate function that was stored in the registry', function () {
       var custom = entry => {
-        return this._doInterpolate(entry);
+        return this.doInterpolate(entry);
       };
       var prev = instance._registry.interpolateFn;
       var previous = instance.setInterpolateFn(custom);

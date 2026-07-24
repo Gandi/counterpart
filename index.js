@@ -59,7 +59,7 @@ class Counterpart extends EventTarget {
       locale: 'en',
       interpolate: true,
       interpolateFn: (entry, options) => {
-        return this._doInterpolate(entry, options);
+        return this.doInterpolate(entry, options);
       },
       fallbackLocales: [],
       scope: null,
@@ -452,7 +452,7 @@ Counterpart.prototype._normalizeKey = function (key, separator) {
   return this._registry.normalizedKeys[separator][key];
 };
 
-Counterpart.prototype._doInterpolate = function (entry, values) {
+Counterpart.prototype.doInterpolate = function (entry, values) {
   if (typeof entry !== 'string') {
     return entry;
   }

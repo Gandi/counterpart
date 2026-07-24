@@ -143,9 +143,15 @@ To do so, configure your translator:
 
 ```js
 const prev = translate.setInterpolateFn((entry, options) => {
+  if (typeof entry !== 'string') {
+    // you may need to continue the process unless the entry is a string.
+    // for example, entry is a function when translation is pluralized
+    return entry;
+  }
+
   let interpolated = entry;
   interpolated = applyModificationBefore(interpolated, options);
-  interpolated = translate._doInterpolate(interpolated, options);
+  interpolated = translate.doInterpolate(interpolated, options);
   interpolated = applyModificationAfter(interpolated, options);
 })
 
